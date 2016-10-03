@@ -64,7 +64,6 @@ namespace ExperimentsApp
                 WeakFeasibilityPenalization wfProcedure = new WeakFeasibilityPenalization(problem);
 
                 timer.Reset();
-
                 if (method == "msls")/*multi start local search*/
                 {
                     if (mh == "vnd")
@@ -146,7 +145,7 @@ namespace ExperimentsApp
                     if (mh == "vnd")
                     {
                         timer.Start();
-                        current = procedure.MutiStartBiLevelPenalization(greedyRdFactor, reStarts, interExp,expCondition, rdObj, overloadFactor,
+                        current = procedure.MutiStartBiLevelPenalization(greedyRdFactor, reStarts, interExp, expCondition, rdObj, overloadFactor,
                                                                          procedure.GetInterRouteNeighborhoods(), procedure.GetIntraRouteNeighborhoods());
                         timer.Stop();
                         Console.WriteLine("vnd {0} strong feasible {1}", procedure.GetTravelCost(current), problem.IsStrongFeasible(current));

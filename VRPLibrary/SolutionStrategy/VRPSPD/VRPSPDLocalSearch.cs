@@ -68,52 +68,44 @@ namespace VRPLibrary.SolutionStrategy.VRPSPD
         {
             List<PickupDeliveryClient> availableClients = new List<PickupDeliveryClient>(from c in ProblemData.Clients
                                                                                          select c);
-            RouteSetRCLProgress greedyRd = new RouteSetRCLProgress(ProblemData, RouteSet.BuildEmptyRouteSet(ProblemData.Vehicles), 0, 0);
+            RouteSetRCLProgress greedyRd = new RouteSetRCLProgress(ProblemData);
             while (availableClients.Count > 0)
             {
                 List<ClientRCL> rcl = BuildRCL(greedyRd, availableClients, alpha);
-                int rdSelection = rdObj.Next(rcl.Count);
-                ClientRCL selectedClient = rcl[rdSelection];
-                if (selectedClient.InsertAtNewRoute && availableClients.Count < ProblemData.Clients.Count) /*la verificacion se hace para el caso base*/
+                if (rcl != null)
+                {
+                    int rdSelection = rdObj.Next(rcl.Count);
+                    ClientRCL selectedClient = rcl[rdSelection];
+                    greedyRd.GetLoadingRoute.Add(selectedClient.ClientInfo.ID);
+                    availableClients.Remove(selectedClient.ClientInfo);
+                    greedyRd.LoadingDelivery += selectedClient.ClientInfo.Delivery;
+                    greedyRd.LoadinglPickup += selectedClient.ClientInfo.Pickup;
+                }
+                else 
                 {
                     greedyRd.CloseRoute();
                     if (!greedyRd.HasAvailablesRoutes)
                         greedyRd.IncreasseRoutes();
                 }
-                greedyRd.GetLoadingRoute.Add(selectedClient.ClientInfo.ID);
-                RemoveClientFromAvailableList(availableClients, selectedClient.ClientInfo.ID);
-                greedyRd.LoadingDelivery += selectedClient.ClientInfo.Delivery;
-                greedyRd.LoadinglPickup += selectedClient.ClientInfo.Pickup;
             }
             greedyRd.PartialSolution.CleanUnusedRoutes();
             return greedyRd.PartialSolution;
         }
 
-        private void RemoveClientFromAvailableList(List<PickupDeliveryClient> availableCliens, int clientID)
-        {
-            availableCliens.Remove(ProblemData.Clients[clientID]);
-        }
-
         protected List<ClientRCL> BuildRCL(RouteSetRCLProgress partialSolution, List<PickupDeliveryClient> availableClients, double alpha)
         {
+            if (partialSolution.GetLoadingRoute == null) return null;
             Route loadingRoute = partialSolution.GetLoadingRoute;
-            List<ClientRCL> allNotEmptyInsertions = new List<ClientRCL>();
-            List<ClientRCL> allEmptyInsertions = new List<ClientRCL>();
+            List<ClientRCL> availableRCL = new List<ClientRCL>();
             foreach (var c in availableClients)
             {
                 int referenceClient = partialSolution.GetReferenceClientID(loadingRoute);
-                if (referenceClient != 0 && CanInsertWeakFeasible(c, loadingRoute.Vehicle.Capacity, partialSolution.LoadinglPickup, partialSolution.LoadingDelivery))
-                    allNotEmptyInsertions.Add(new ClientRCL(c, DeltaCostNotEmptyRoute(c, referenceClient), false));
-                if (CanInsertWeakFeasible(c, partialSolution.GetNextEmptyRouteCapacity, 0, 0))
-                    allEmptyInsertions.Add(new ClientRCL(c, DeltaCostEmptyRoute(c), true));
+                if (CanInsertWeakFeasible(c, loadingRoute.Vehicle.Capacity, partialSolution.LoadinglPickup, partialSolution.LoadingDelivery))
+                    availableRCL.Add(new ClientRCL(c, DeltaCostNotEmptyRoute(c.ID, referenceClient, 0)));
             }
-
-            List<ClientRCL> availableRCL = (allNotEmptyInsertions.Count != 0) ? allNotEmptyInsertions : allEmptyInsertions;
-
+            if (availableRCL.Count == 0) return null;
             double minCost = availableRCL.Min(x => x.DeltaCost);
             double maxCost = availableRCL.Max(x => x.DeltaCost);
-
-            List<ClientRCL> rcl = new List<ClientRCL>();
             return new List<ClientRCL>(from x in availableRCL
                                        where x.DeltaCost >= minCost && x.DeltaCost <= minCost + alpha * (maxCost - minCost)
                                        select x);
@@ -125,16 +117,151 @@ namespace VRPLibrary.SolutionStrategy.VRPSPD
             return c.Delivery + loadingDelivery <= vehicleCapacity && c.Pickup + loadingPickup <= vehicleCapacity;
         }
 
-        protected double DeltaCostNotEmptyRoute(PickupDeliveryClient c, int referenceClient)
-        {
-            double removed = ProblemData.TravelDistance[referenceClient, 0];
-            double added = ProblemData.TravelDistance[referenceClient, c.ID] + ProblemData.TravelDistance[c.ID, 0];
-            return added - removed;
-        }
-
         protected double DeltaCostEmptyRoute(PickupDeliveryClient c)
         {
             return ProblemData.TravelDistance[0, c.ID] + ProblemData.TravelDistance[c.ID, 0];
+        }
+
+        #endregion
+
+        #region Greedy Seed Solution
+
+        public List<RouteSet> BuildGreedySeedPool(Random rdObj, double alpha, double overloadFactor)
+        {
+            return BuildGreedySeedPool(rdObj, alpha, ((r, c, i, p, n) => DeltaCostOverload(r, c, i, p, n, overloadFactor)), false);
+        }
+
+        public List<RouteSet> BuildGreedySeedPool(Random rdObj, double alpha, double farInsertionFactor, double overloadFactor)
+        {
+            return BuildGreedySeedPool(rdObj, alpha, ((r, c, i, p, n) => DeltaCostOverload(r, c, i, p, n, overloadFactor, farInsertionFactor)), false);
+        }
+
+        public List<RouteSet> BuildFeasibleGreedySeedPool(Random rdObj, double alpha)
+        {
+            return BuildGreedySeedPool(rdObj, alpha, ((r, c, i, p, n) => DeltaCostOverload(r, c, i, p, n, 0)), true);
+        }
+
+        public List<RouteSet> BuildFeasibleGreedySeedPool(Random rdObj, double alpha, double farInsertionFactor)
+        {
+            return BuildGreedySeedPool(rdObj, alpha, ((r, c, i, p, n) => DeltaCostOverload(r, c, i, p, n, 0, farInsertionFactor)), true);
+        }
+
+        protected bool CanInsertStrongFeasible(PickupDeliveryClient c, Route loadingRoute, int index)
+        {
+            return StrongAddDeltaOverload(loadingRoute, index, new List<int> { c.ID }) == 0;
+        }
+
+        protected List<RouteSet> BuildGreedySeedPool(Random rdObj, double alpha, Func<Route, PickupDeliveryClient, int, int, int, double> deltaCostFunction, bool insertFeasible)
+        {
+            List<RouteSet> pool = new List<RouteSet>();
+            List<PickupDeliveryClient> seedClients = new List<PickupDeliveryClient>(from c in ProblemData.Clients select c);
+            while (seedClients.Count > 0)
+            {
+                RouteSet solution = BuildGreedyRandomizedSeedSolution(rdObj, seedClients, alpha, deltaCostFunction, insertFeasible);
+                if (solution != null)
+                    pool.Add(solution);
+                else break;
+            }
+            return pool;
+        }
+
+        protected RouteSet BuildGreedyRandomizedSeedSolution(Random rdObj, List<PickupDeliveryClient> seedClients, double alpha, Func<Route, PickupDeliveryClient, int, int, int, double> deltaCostFunction, bool insertFeasible)
+        {
+            RouteSetRCLProgress greedyRd = new RouteSetRCLProgress(ProblemData);
+            List<PickupDeliveryClient> availableClients = new List<PickupDeliveryClient>(from c in ProblemData.Clients select c);
+            while (availableClients.Count > 0)
+            {
+                List<ExtendedClientRCL> rcl = BuildExtendedRCL(greedyRd, availableClients, alpha, deltaCostFunction, insertFeasible);
+                if (rcl != null)
+                {
+                    int rdSelection = rdObj.Next(rcl.Count);
+                    ExtendedClientRCL selectedClient = rcl[rdSelection];
+                    if (selectedClient.InsertionPoint < greedyRd.GetLoadingRoute.Count)
+                        greedyRd.GetLoadingRoute.Insert(selectedClient.InsertionPoint, selectedClient.ClientInfo.ID);
+                    else 
+                        greedyRd.GetLoadingRoute.Add(selectedClient.ClientInfo.ID);
+                    availableClients.Remove(selectedClient.ClientInfo);
+                    greedyRd.LoadingDelivery += selectedClient.ClientInfo.Delivery;
+                    greedyRd.LoadinglPickup += selectedClient.ClientInfo.Pickup;
+                }
+                else
+                {
+                    greedyRd.CloseRoute();
+                    greedyRd.IncreasseRoutes(seedClients, rdObj);
+                    if (greedyRd.HasAvailablesRoutes)
+                    {
+                        int loadingSeed = greedyRd.GetLoadingRoute[0];
+                        availableClients.Remove(ProblemData.Clients[loadingSeed]);
+                    }
+                    else break;
+                }
+            }
+            /*
+            esto ya no hace falta pq las rutas se van creando de una en una
+            List<int> unused = greedyRd.PartialSolution.CleanUnusedSeedRoutes();
+            seedClients.AddRange(from c in unused select ProblemData.Clients[c]);*/
+            greedyRd.PartialSolution.CleanUnusedRoutes();
+            if (greedyRd.PartialSolution.CountClientServed == ProblemData.Clients.Count)
+                return greedyRd.PartialSolution;
+            else return null;
+        }
+
+        protected List<ExtendedClientRCL> BuildExtendedRCL(RouteSetRCLProgress partialSolution, List<PickupDeliveryClient> availableClients, double alpha, Func<Route, PickupDeliveryClient, int, int, int, double> deltaCostFunction, bool insertFeasible)
+        {
+            if (partialSolution.GetLoadingRoute == null) return null;
+            Route loadingRoute = partialSolution.GetLoadingRoute;
+            List<ExtendedClientRCL> availableRCL = new List<ExtendedClientRCL>();
+            foreach (var c in availableClients)
+                if (CanInsertWeakFeasible(c, loadingRoute.Vehicle.Capacity, partialSolution.LoadinglPickup, partialSolution.LoadingDelivery))
+                    availableRCL.AddRange(GetAllInsertionsInfo(loadingRoute, c, deltaCostFunction, insertFeasible));
+            if (availableRCL.Count == 0) return null;
+            double minCost = availableRCL.Min(x => x.DeltaCost);
+            double maxCost = availableRCL.Max(x => x.DeltaCost);
+            return new List<ExtendedClientRCL>(from x in availableRCL
+                                       where x.DeltaCost >= minCost && x.DeltaCost <= minCost + alpha * (maxCost - minCost)
+                                       select x);
+
+        }
+
+        protected List<ExtendedClientRCL> GetAllInsertionsInfo(Route loadingRoute, PickupDeliveryClient c, Func<Route, PickupDeliveryClient, int, int, int, double> deltaCostFunction, bool insertfeasible)
+        {
+            List<ExtendedClientRCL> insertions = new List<ExtendedClientRCL>();
+            int prev = 0; int next;
+            for (int i = 0; i <= loadingRoute.Count; i++)
+            {
+                next = (i < loadingRoute.Count) ? loadingRoute[i] : 0;
+                double cost = deltaCostFunction(loadingRoute, c, i, prev, next);
+                if (insertfeasible && CanInsertStrongFeasible(c, loadingRoute, i))
+                    insertions.Add(new ExtendedClientRCL(ProblemData.Clients[c.ID], cost, i));
+                if(!insertfeasible)
+                    insertions.Add(new ExtendedClientRCL(ProblemData.Clients[c.ID], cost, i));
+                prev = next;
+            }
+            return insertions;
+        }
+
+        protected double DeltaCostNotEmptyRoute(int cID, int prevClient, int nextClient)
+        {
+            double removed = ProblemData.TravelDistance[prevClient, nextClient];
+            double added = ProblemData.TravelDistance[prevClient, cID] + ProblemData.TravelDistance[cID, nextClient];
+            return added - removed;
+        }
+
+        protected double DeltaCostNotEmptyRoute(int cID, int prevClient, int nextClient, double farInsertionFactor)
+        {
+            return DeltaCostNotEmptyRoute(cID, prevClient, nextClient) + farInsertionFactor * (ProblemData.TravelDistance[0, cID] + ProblemData.TravelDistance[cID, 0]);
+        }
+
+        protected double DeltaCostOverload(Route loadingRoute, PickupDeliveryClient c, int index, int prev, int next, double overloadFactor)
+        {
+            double deltaOverload = (overloadFactor == 0)? 0: overloadFactor * StrongAddDeltaOverload(loadingRoute, index, new List<int>{ c.ID});
+            return DeltaCostNotEmptyRoute(c.ID, prev, next) + deltaOverload;
+        }
+
+        protected double DeltaCostOverload(Route loadingRoute, PickupDeliveryClient c, int index, int prev, int next, double overloadFactor, double farInsertionFactor)
+        {
+            double deltaOverload = (overloadFactor == 0) ? 0 : overloadFactor * StrongAddDeltaOverload(loadingRoute, index, new List<int> { c.ID });
+            return DeltaCostNotEmptyRoute(c.ID, prev, next, farInsertionFactor) + deltaOverload;
         }
 
         #endregion
@@ -1165,28 +1292,21 @@ namespace VRPLibrary.SolutionStrategy.VRPSPD
         public double LoadingDelivery { get; set; }
         private int currentRoute;
 
-        public RouteSetRCLProgress(VRPSimultaneousPickupDelivery problemData, RouteSet partialSolution, double pickup, double delivery)
+        public RouteSetRCLProgress(VRPSimultaneousPickupDelivery problemData)
         {
             ProblemData = problemData;
-            PartialSolution = partialSolution;
-            LoadingDelivery = delivery;
-            LoadinglPickup = pickup;
-            currentRoute = 0;
+            PartialSolution = new RouteSet();
+            LoadingDelivery = 0;
+            LoadinglPickup = 0;
+            currentRoute = -1;
         }
 
         public Route GetLoadingRoute
         {
-            get { return PartialSolution[currentRoute]; }
-        }
-
-        public double GetNextEmptyRouteCapacity
-        {
             get
             {
-                if (currentRoute + 1 < PartialSolution.Count)
-                    return PartialSolution[currentRoute + 1].Vehicle.Capacity;
-                else
-                    return PartialSolution[0].Vehicle.Capacity; /*el crecimiento de las rutas es ciclico*/
+                if (currentRoute < 0 || currentRoute > PartialSolution.Count) return null;
+                return PartialSolution[currentRoute];
             }
         }
 
@@ -1215,22 +1335,50 @@ namespace VRPLibrary.SolutionStrategy.VRPSPD
             PartialSolution.AddRange(newRoutes);
         }
 
+        public void IncreasseRoutes(List<PickupDeliveryClient> seedClients, Random rdObj)
+        {
+            Route r = new Route(ProblemData.Vehicles[rdObj.Next(ProblemData.Vehicles.Count)]);
+            List<int> allreadyIncluded = new List<int>(from route in this.PartialSolution
+                                                       from c in route
+                                                       select c);
+            List<PickupDeliveryClient> availablesForSeed = new List<PickupDeliveryClient>(from c in seedClients
+                                                                                        where !allreadyIncluded.Contains(c.ID)
+                                                                                        select c);
+            if (availablesForSeed.Count > 0)
+            {
+                PickupDeliveryClient sC = availablesForSeed[rdObj.Next(availablesForSeed.Count)];
+                r.Add(sC.ID);
+                LoadingDelivery = sC.Delivery;
+                LoadinglPickup = sC.Pickup;
+                PartialSolution.Add(r);
+                seedClients.Remove(sC);
+            }
+        }
+
     }
 
     public class ClientRCL
     {
         public PickupDeliveryClient ClientInfo { get; set; }
         public double DeltaCost { get; set; }
-        internal bool InsertAtNewRoute { get; set; }
 
-        public ClientRCL(PickupDeliveryClient client, double cost, bool insertNew)
+        public ClientRCL(PickupDeliveryClient client, double cost)
         {
             ClientInfo = client;
             DeltaCost = cost;
-            InsertAtNewRoute = insertNew;
         }
     }
 
+    public class ExtendedClientRCL : ClientRCL
+    {
+        public int InsertionPoint { get; set; }
+        public ExtendedClientRCL(PickupDeliveryClient client, double cost, int insertionPoint)
+            :base(client, cost)
+        {
+            InsertionPoint = insertionPoint;
+        }
+    }
+         
     public abstract class Move
     {
         public double deltaCost { get; set; }

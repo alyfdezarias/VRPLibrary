@@ -7,6 +7,8 @@ using System.Xml.Linq;
 using VRPLibrary.FleetData;
 using System.IO;
 
+using VRPLibrary.ClientData;
+
 namespace VRPLibrary.RouteSetData
 {
     public class RouteSet: List<Route>, ICloneable
@@ -118,6 +120,26 @@ namespace VRPLibrary.RouteSetData
             return solution;
         }
 
+        public static RouteSet BuildSeedRouteSet(Fleet fleet, List<PickupDeliveryClient> seedClients, Random rdObj)
+        {
+            RouteSet solution = new RouteSet();
+            foreach (var item in fleet)
+                for (int i = 0; i < item.Count; i++)
+                {
+                    Route r = new Route(item);
+                    /*cuando se trate de flota heterogenea si hay q determinar quienes son los clientes factibles para la ruta*/
+                    //var feasibles = from s in seedClients where s.Pickup <= item.Capacity && s.Delivery <= item.Capacity select s.ID;/*todos los clientes son validos en todos los vehiculos*/
+                    int seedIndex = rdObj.Next(seedClients.Count);
+                    int seedID = seedClients[seedIndex].ID;
+                    r.Add(seedID);
+                    seedClients.RemoveAt(seedIndex);
+                    solution.Add(r);
+                }
+            return solution;
+
+
+        }
+
         public bool IsCoincidentRouteSet(RouteSet solution)
         {
             if (Count != solution.Count) return false;
@@ -157,7 +179,7 @@ namespace VRPLibrary.RouteSetData
             }
         }
 
-        public void InsertAtRandomPosition(int clientID, Random rdObj)
+       public void InsertAtRandomPosition(int clientID, Random rdObj)
         {
             int routeIndex = rdObj.Next(Count);
             this[routeIndex].InsertAtRandomPosition(clientID, rdObj);
