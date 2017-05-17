@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="VRPLibrary.ClientData.Client" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAEAAAAAAAAAAAAAAQAAAAAAAAAABA=</HashCode>
+      <FileName>ClientData\Client.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="VRPLibrary.ClientData.PickupDeliveryClient" Collapsed="true">
+    <Position X="0.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAACAAAAAAAAQAAAAAAAAAAFA=</HashCode>
+      <FileName>ClientData\PickupDeliveryClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.ClientData.DeliveryClient" Collapsed="true">
+    <Position X="0.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAQAAAAAAAAAABg=</HashCode>
+      <FileName>ClientData\DeliveryClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.ClientData.ClientSet&lt;TClient&gt;" Collapsed="true">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAEQAAACAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>ClientData\ClientSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.ClientData.TravelData" Collapsed="true">
+    <Position X="0.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAgAAAAAAAAAAAAQAAABAAAAAAAAAABAA=</HashCode>
+      <FileName>ClientData\TravelData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.FleetData.VehicleType" Collapsed="true">
+    <Position X="0.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAQCAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>FleetData\VehicleType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.FleetData.Fleet" Collapsed="true">
+    <Position X="0.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAIAEAAAAAAAQAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>FleetData\Fleet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.ProblemData.VehicleRoutingProblem&lt;TClient&gt;" Collapsed="true">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAgAAAACAEAwAAAAAAAAAAgAAAAAAABAA=</HashCode>
+      <FileName>ProblemData\VehicleRoutingProblem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.ProblemData.VRPSimultaneousPickupDelivery" Collapsed="true">
+    <Position X="2.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oAAQAgACgAACGAAgAABEQwgAESQsQEAAAgphBkIIAAA=</HashCode>
+      <FileName>ProblemData\VRPSimultaneousPickupDelivery.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.RouteSetData.Route" Collapsed="true">
+    <Position X="0.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABBAAAAAAAAAAgAEAQAAAAAABQAAAAAAAAAAAAAABBA=</HashCode>
+      <FileName>RouteSetData\Route.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="VRPLibrary.RouteSetData.RouteSet" Collapsed="true">
+    <Position X="0.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAhAABAAAEAAAwAEAAAAAgAkARAAAAAABAAAAgAABBA=</HashCode>
+      <FileName>RouteSetData\RouteSet.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.VRPSPDLocalSearch" Collapsed="true">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>GQAAYEAcQgQQAFKEAQADoAQI3FAEAFgCIAIaOEFhWBs=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.RouteSetRCLProgress" Collapsed="true">
+    <Position X="0.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EIAAAAAAAAAAAAAABEAQAAAAAAAEAAAAAAAAEAAAQBE=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.ClientRCL" Collapsed="true">
+    <Position X="0.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.ExtendedClientRCL" Collapsed="true">
+    <Position X="0.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.Move" Collapsed="true">
+    <Position X="16.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.IntraMove" Collapsed="true">
+    <Position X="16.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAiAAAAAAAAAgACAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.IntraSwap" Collapsed="true">
+    <Position X="21.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.TwoOpt" Collapsed="true">
+    <Position X="23.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.InterMove" Collapsed="true">
+    <Position X="14.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.TwoInterMove" Collapsed="true">
+    <Position X="12.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.InterSwap" Collapsed="true">
+    <Position X="16.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.TwoOneInterSwap" Collapsed="true">
+    <Position X="19" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.TwoTwoInterSwap" Collapsed="true">
+    <Position X="10" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.CrossoverRoute" Collapsed="true">
+    <Position X="14.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.ReverseCrossoverRoute" Collapsed="true">
+    <Position X="14.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\VRPSPDLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.PenalizationLocalSearch" Collapsed="true">
+    <Position X="4.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAQAECAAIAEAQAAAAAAgAAIIAJAAgCAgAIQAGAABQEE=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\PenalizationLocalSearch.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VRPLibrary.SolutionStrategy.VRPSPD.WeakFeasibilityPenalization" Collapsed="true">
+    <Position X="4.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAQAAAAAACAAAAAAAAAACAAAAAAAAACACAAAAAAAA=</HashCode>
+      <FileName>SolutionStrategy\VRPSPD\WeakFeasibilityPenalization.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
